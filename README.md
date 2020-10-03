@@ -1,5 +1,3 @@
-# Scales and Axis
+# Animated Bar chart
 
-In this tutorial we build upon the previous exercise and learn the use of linearScales and Axis in D3.
-
-Additionally a problem with selecting all paths including those of the axis is solved using class selectors.
+In this tutorial we extend the previous one about axis and create a colorized bar chart with animated change in dimensions, as well as colorization.
