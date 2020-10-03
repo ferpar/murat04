@@ -37,9 +37,11 @@ function App() {
       .data(data)
       .join("rect")
       .attr("class", "bar")
+      .style("transform", "scale(1, -1)")
       .attr("x", (value, index) => xScale(index))
-      .attr("y", yScale)
+      .attr("y", -300)
       .attr("width", xScale.bandwidth())
+      .transition()
       .attr("height", value => 300 - yScale(value));
     }, [data]);
   return <React.Fragment>
