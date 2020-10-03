@@ -15,23 +15,33 @@ function App() {
   const svgRef = useRef();
   useEffect(() => {
     const svg = select(svgRef.current);
+
     const xScale = scaleBand()
       .domain(data.map( (val, idx) => idx))
       .range([0, (data.length - 1)*50])
       .padding(0.5);
+
     const yScale = scaleLinear()
       .domain([0, Math.max(...data)*1.2])
       .range([300, 0]);
+
+    const colorScale = scaleLinear()
+      .domain([75, 150, 300])
+      .range(["green", "orange", "red"])
+      .clamp(true);
+
     const xAxis = axisBottom(xScale).ticks(data.length).tickFormat( idx => idx + 1);
     svg
       .select(".x-axis")
       .style("transform", "translateY(300px)")
       .call(xAxis);
+
     const yAxis = axisRight(yScale).ticks(5);
     svg
       .select(".y-axis")
       .style("transform", `translateX(${50*(data.length -1)}px)`)
       .call(yAxis);      
+
     svg
       .selectAll(".bar")
       .data(data)
@@ -42,7 +52,9 @@ function App() {
       .attr("y", -300)
       .attr("width", xScale.bandwidth())
       .transition()
+      .attr("fill", colorScale)
       .attr("height", value => 300 - yScale(value));
+
     }, [data]);
   return <React.Fragment>
     <svg ref={svgRef}>
@@ -50,7 +62,7 @@ function App() {
       <g className="y-axis" />
     </svg>
     <br/>
-    <button onClick={() => setData(data.map( val => val + 5))}>Update Data</button>
+    <button onClick={() => setData(data.map( val => val + 25))}>Update Data</button>
     <button onClick={() => setData(data.filter( value => value  < 50))}> Filter Data</button>
     </React.Fragment>;
 }
