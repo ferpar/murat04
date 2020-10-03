@@ -2,11 +2,10 @@ import React, { useRef, useEffect, useState } from "react";
 import "./App.css";
 import { 
   select, 
-  line, 
-  curveCardinal, 
   axisBottom, 
   axisRight,
-  scaleLinear 
+  scaleLinear,
+  scaleBand
 } from "d3";
 
 const initialData = [25, 45, 30, 74, 38, 80, 160, 240, 200, 100];
@@ -16,9 +15,10 @@ function App() {
   const svgRef = useRef();
   useEffect(() => {
     const svg = select(svgRef.current);
-    const xScale = scaleLinear()
-      .domain([0, data.length - 1])
-      .range([0, (data.length - 1)*50]);
+    const xScale = scaleBand()
+      .domain(data.map( (val, idx) => idx))
+      .range([0, (data.length - 1)*50])
+      .padding(0.5);
     const yScale = scaleLinear()
       .domain([0, Math.max(...data)*1.2])
       .range([300, 0]);
@@ -31,28 +31,16 @@ function App() {
     svg
       .select(".y-axis")
       .style("transform", `translateX(${50*(data.length -1)}px)`)
-      .call(yAxis);
-    const myLine = line()
-      .x( (value, idx) => xScale(idx))
-      .y(yScale)
-      .curve(curveCardinal);
-    // svg
-    //   .selectAll("circle")
-    //   .data(data)
-    //   .join("circle")
-    //   .attr("r", value => value)
-    //   .attr("cx", value => value * 2)
-    //   .attr("cy", value => value * 2)
-    //   .attr("stroke", "red")
+      .call(yAxis);      
     svg
-      .selectAll(".line")
-      .data([data])
-      .join("path")
-      .attr("class", "line")
-      .attr("d", myLine)
-      .attr("fill", "none")
-      .attr("stroke", "blue")
-  
+      .selectAll(".bar")
+      .data(data)
+      .join("rect")
+      .attr("class", "bar")
+      .attr("x", (value, index) => xScale(index))
+      .attr("y", yScale)
+      .attr("width", xScale.bandwidth())
+      .attr("height", value => 300 - yScale(value));
     }, [data]);
   return <React.Fragment>
     <svg ref={svgRef}>
